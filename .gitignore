@@ -2,3 +2,5 @@
 static
 statics
 templates
+venv
+.env
