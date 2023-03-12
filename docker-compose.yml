@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=financial
+      - POSTGRES_USER=financial
+      - POSTGRES_PASSWORD=123
+  web:
+    build: .
+#    command: uwsgi --http 0.0.0.0:8000 --module distributed.wsgi
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_NAME=users
+      - DB_USER=users
+      - DB_PASS=123
+      - DB_HOST=db
+    depends_on:
+      - db
+#  nginx:
+#    container_name: nginx_container
+#    build: ./nginx
+#    ports:
+#      - 80:80
