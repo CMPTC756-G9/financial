@@ -10,15 +10,16 @@ class Invoice(models.Model):
 
     @property
     def total_price(self):
-        return self.items.aggregate(models.Sum(F('price')) * F('quantity'))
+        return sum([item.price * item.quantity for item in self.items.all()])
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        Account.objects.filter(pk=self.account_id).update(balance=F('balance') - self.total_price)
-        return super().save(force_insert, force_update, using, update_fields)
+    # def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    #     res = super().save(force_insert, force_update, using, update_fields)
+    #     Account.objects.filter(pk=self.account_id).update(balance=F('balance') - self.total_price)
+    #     return res
 
 
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='items')
     quantity = models.IntegerField()
-    product = models.CharField(max_length=100)
+    product_id = models.IntegerField()
     price = models.IntegerField()
